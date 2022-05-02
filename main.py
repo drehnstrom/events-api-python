@@ -1,3 +1,4 @@
+from pickle import NONE
 from flask import Flask, request
 from flask_restful import Resource, Api
 from flask import jsonify
@@ -50,6 +51,7 @@ class EventsList(Resource):
                     'datetime_added': str(row[6])
                 }
                 DB_EVENTS['events'].append(ev)
+            cur.close()
             conn.close()
             return DB_EVENTS
         except (Exception, psycopg2.DatabaseError) as error:
@@ -58,19 +60,53 @@ class EventsList(Resource):
             return MOCK_EVENTS
 
     def post(self):
-        pass
-        """ data = request.get_json(True)
-        event_id = int(max(MOCK_EVENTS.keys())) + 1
-        event_id = '%i' % event_id
-        MOCK_EVENTS[event_id] = {
-            "title": data["title"],
-            "event_time": data["event_time"],
-            "description": data["description"],
-            "location": data["location"],
-            "likes": 0,
+        sql = """
+        INSERT INTO events (title, event_time, description, location) 
+        VALUES (%s, %s, %s, %s) RETURNING id;
+        """
+        data = request.get_json(True)
+        title = data["title"]
+        event_time = data["event_time"]
+        description = data["description"]
+        location = data["location"]
 
-        }
-        return MOCK_EVENTS[event_id], 201 """
+        id = NONE
+
+        try:
+            conn = psycopg2.connect(database=DATABASE, user = USER, password = PASSWORD, host = HOST, port = "5432")
+            print("Opened database successfully")
+            cur = conn.cursor()
+            print(sql)
+            cur.execute(sql, (title, event_time, description, location))
+            id = cur.fetchone()[0]
+            conn.commit()
+
+            cur.execute("SELECT * FROM events WHERE id = %s", (str(id)))
+            row = cur.fetchone()
+            ev = {
+                'id': row[0],
+                'title': row[1],
+                'event_time': row[2],
+                'description': row[3],
+                'location': row[4], 
+                'likes': row[5],
+                'datetime_added': str(row[6])
+                }
+            DB_EVENTS['events'].append(ev)
+            cur.close()
+            conn.close()
+            return DB_EVENTS
+        except:
+            event_id = int(max(MOCK_EVENTS.keys())) + 1
+            event_id = '%i' % event_id
+            MOCK_EVENTS[event_id] = {
+                "title": data["title"],
+                "event_time": data["event_time"],
+                "description": data["description"],
+                "location": data["location"],
+                "likes": 0,
+                }
+            return MOCK_EVENTS[event_id], 201
 
 
 class Event(Resource):
@@ -94,6 +130,7 @@ class Event(Resource):
                 'datetime_added': str(row[6])
             }
             DB_EVENTS['events'].append(ev)
+            cur.close()
             conn.close()
             return DB_EVENTS
         except (Exception, psycopg2.DatabaseError) as error:
@@ -120,12 +157,25 @@ class Event(Resource):
             return event, 200 """
 
     def delete(self, event_id):
-        pass
-        """  if event_id not in MOCK_EVENTS:
-            return "Record not found", 404
-        else:
-            del MOCK_EVENTS[event_id]
-            return '', 204 """
+        try:
+            conn = psycopg2.connect(database=DATABASE, user = USER, password = PASSWORD, host = HOST, port = "5432")
+            print("Opened database successfully")
+            cur = conn.cursor()
+            sql = 'DELETE FROM events WHERE id = %s;'
+            print(sql)
+            cur.execute(sql, (event_id))
+            conn.commit()
+            cur.close()
+            conn.close()
+            return "", 204
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+            if event_id not in MOCK_EVENTS:
+                return "Record not found", 404
+            else:
+                del MOCK_EVENTS[event_id]
+                return '', 204
 
 
 api.add_resource(EventsList, '/events')
@@ -143,4 +193,4 @@ def server_error(e):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8082, debug=True)

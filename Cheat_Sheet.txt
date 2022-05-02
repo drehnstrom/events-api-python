@@ -1,0 +1,12 @@
+# Curl to get Events
+curl http://localhost:8082/events
+
+# Curl to get one event
+curl http://localhost:8082/events/1
+
+# Curl to Add event
+curl -X POST -H "Content-Type: application/json" -d '{"title": "Curl Training", "event_time": "Tomorrow", "description": "Fun with REST", "location": "Online"}' http://localhost:8082/events
+
+
+# Curl to Delete event
+curl -X DELETE http://localhost:8082/events/7
