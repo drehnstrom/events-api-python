@@ -4,6 +4,9 @@ curl http://localhost:8082/events
 # Curl to get one event
 curl http://localhost:8082/events/1
 
+# Curl to add a like to and event
+curl http://localhost:8082/events/1?action=like
+
 # Curl to Add event
 curl -X POST -H "Content-Type: application/json" -d '{"title": "Curl Training", "event_time": "Tomorrow", "description": "Fun with REST", "location": "Online"}' http://localhost:8082/events
 
