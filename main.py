@@ -1,3 +1,4 @@
+from ast import And
 from pickle import NONE
 from flask import Flask, request
 from flask_restful import Resource, Api
@@ -111,12 +112,23 @@ class EventsList(Resource):
 
 class Event(Resource):
     def get(self, event_id):
+        get_likes_sql = 'SELECT likes from events WHERE id = %s;'
+        update_likes_sql = 'UPDATE events SET likes = %s WHERE id = %s'
+        sql = 'SELECT id, title, event_time, description, location, likes, datetime_added FROM events WHERE id = %s;'
+        conn = psycopg2.connect(database=DATABASE, user = USER, password = PASSWORD, host = HOST, port = "5432")
+        print('Opened database successfully')
+        cur = conn.cursor()
+
+        action = request.args.get('action')
+        print('ACTION = {0}'.format(action))
         try:
-            conn = psycopg2.connect(database=DATABASE, user = USER, password = PASSWORD, host = HOST, port = "5432")
-            print("Opened database successfully")
-            cur = conn.cursor()
-            sql = 'SELECT id, title, event_time, description, location, likes, datetime_added FROM events WHERE id = %s;'
-            print(sql)
+            # Here add a like if the action parameter was passed. 
+            if (action is not None) and (str.lower(action) == 'like'):
+                cur.execute(get_likes_sql, (event_id))
+                current_likes = cur.fetchone()[0];
+                cur.execute(update_likes_sql, (current_likes + 1, event_id))
+                conn.commit()
+                
             cur.execute(sql, (event_id))
             row = cur.fetchone()
             DB_EVENTS['events'] = []  
