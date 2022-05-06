@@ -13,13 +13,13 @@
   {{/events}}
 </ul>
 
-
-
 <script>
 	$(".like").css( 'cursor', 'pointer' ).click(function(){   	
     	var url = "/like/" + this.id;
     	$.get(url, function(data, status){
+        console.log(data);
         	var likeID = "like-" + data.id;
+          
         	document.getElementById(likeID).innerHTML = "Likes: " + data.likes;
     });
 });

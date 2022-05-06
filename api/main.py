@@ -131,7 +131,6 @@ class Event(Resource):
                 
             cur.execute(sql, (event_id))
             row = cur.fetchone()
-            DB_EVENTS['events'] = []  
             ev = {
                 'id': row[0],
                 'title': row[1],
@@ -141,10 +140,9 @@ class Event(Resource):
                 'likes': row[5],
                 'datetime_added': str(row[6])
             }
-            DB_EVENTS['events'].append(ev)
             cur.close()
             conn.close()
-            return DB_EVENTS
+            return ev
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
             # This returns the Mock Data
