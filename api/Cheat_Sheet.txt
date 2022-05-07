@@ -12,4 +12,4 @@ curl -X POST -H "Content-Type: application/json" -d '{"title": "Curl Training", 
 
 
 # Curl to Delete event
-curl -X DELETE http://localhost:8082/events/7
+curl -X DELETE http://localhost:8082/events/8
