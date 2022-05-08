@@ -12,4 +12,11 @@ curl -X POST -H "Content-Type: application/json" -d '{"title": "Curl Training", 
 
 
 # Curl to Delete event
-curl -X DELETE http://localhost:8082/events/8
+curl -X DELETE http://localhost:8082/events/<ID>
+
+
+# To run tests just run pytest from the API folder
+pytest
+
+# To run tests and see console output
+pytest -s
