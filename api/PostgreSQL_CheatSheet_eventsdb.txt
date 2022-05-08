@@ -1,0 +1,56 @@
+#### PostgreSQL Cheat Sheet Events Database.
+
+#Connect to database with GCloud using root account
+gcloud sql connect uncommon --user=postgres --quiet
+
+# Create a DB
+CREATE DATABASE eventsdb;
+
+# Show all the database names
+SELECT datname FROM pg_database;
+
+# List the databases (previous way is better)
+\l or \list
+
+# Create a user (if not already created)
+create user doug with encrypted password 'YOUR_PASSWORD_HERE';
+
+#give user access to DB
+grant all privileges on database eventsdb to doug;
+
+#Connect to dtabase with GCloud
+gcloud sql connect uncommon --user=doug --database=eventsdb --quiet
+
+#Connect to database once logged in
+\c eventsdb;
+
+
+# Create a table with an auto-incrementing integer as key
+CREATE TABLE events(
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    event_time VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    likes INT DEFAULT 0,
+    datetime_added TIMESTAMP WITH TIME ZONE DEFAULT Current_timestamp);
+
+
+# Show the tables
+\dt
+
+# Show table Schema
+SELECT * FROM information_schema.columns WHERE TABLE_NAME = 'events';
+
+# Add a record
+INSERT INTO events (title, event_time, description, location) 
+VALUES ('Pet Show', 'June 6 at Noon', 
+'Super-fun with furry friends!', 'Reston Dog Park');
+
+# Add a record
+INSERT INTO events (title, event_time, description, location) 
+VALUES ('React Training', 'Next Week', 'JavaScript for fun and profit.', 'Training Room 1');
+
+
+# Select ALL
+SELECT * from events;
