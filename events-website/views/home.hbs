@@ -8,6 +8,7 @@
     <div>Where: {{ location }}</div>
     <div><span class="like" id="{{ id }}">&#128077;</span></div>
 		<div><span id="like-{{ id }}">Likes: {{ likes }}</span></div>
+    <div><span class="trash" id="{{ id }}">&#128465;</span></div>
     <small class="text-muted">{{ datetime_added }}</small>
   </div>
   {{/events}}
@@ -24,4 +25,11 @@
     });
 });
 
+$(".trash").css( 'cursor', 'pointer' ).click(function(){   	
+    	var url = "/delete/" + this.id;
+    	$.get(url, function(data, status){
+        console.log(data);
+        location.reload();
+    });
+});
 </script>

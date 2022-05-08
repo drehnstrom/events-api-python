@@ -138,9 +138,33 @@ app.get('/like/:id', (req, res) => {
             }
         }
     );
+})
+
+
+app.get('/delete/:id', (req, res) => {
+    const id = req.params.id;
+    request.delete(  // first argument: url + return format
+        {
+            url: SERVER + '/events/' + id,
+            json: true
+        },
+        (error, response, body) => {
+            if (error) {
+                console.log('error:', error); // Print the error if one occurred
+                res.render('error_message',
+                    {
+                        layout: 'default',  //the outer html page
+                        error: error // pass the data from the server to the template
+                    });
+            }
+            else {
+                console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+                console.log(body); // print the return from the server microservice
+                res.redirect("/"); // Redirect to home route
+            }
+        }
+    );
 });
-
-
 
 
 // generic error handling
