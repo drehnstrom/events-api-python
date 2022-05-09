@@ -35,6 +35,8 @@ CREATE TABLE events(
     likes INT DEFAULT 0,
     datetime_added TIMESTAMP WITH TIME ZONE DEFAULT Current_timestamp);
 
+# Delete a table
+DROP TABLE events;
 
 # Show the tables
 \dt

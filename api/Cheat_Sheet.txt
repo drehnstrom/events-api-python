@@ -8,7 +8,9 @@ curl http://localhost:8082/events/1
 curl http://localhost:8082/events/1?action=like
 
 # Curl to Add event
-curl -X POST -H "Content-Type: application/json" -d '{"title": "Curl Training", "event_time": "Tomorrow", "description": "Fun with REST", "location": "Online"}' http://localhost:8082/events
+curl -X POST -H "Content-Type: application/json" -d '{"title": "Dinner", "event_time": "Tonight", "description": "Fun with Food", "location": "Percells House"}' http://localhost:8082/events
+
+curl -X POST -H "Content-Type: application/json" -d '{"title": "Basketball", "event_time": "After Work", "description": "Get some exercise", "location": "At the Gym"}' http://localhost:8082/events
 
 
 # Curl to Delete event

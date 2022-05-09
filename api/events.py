@@ -5,6 +5,7 @@ from config import DATABASE, USER, PASSWORD, HOST
 from events_db import Events_DB
 
 class EventsList(Resource):
+    # Give me all the Events
     def get(self):
         return Events_DB().getAllEvents()
 
