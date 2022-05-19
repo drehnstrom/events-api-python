@@ -10,7 +10,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
   <!-- JQuery -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js">
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
@@ -21,6 +21,68 @@
   <header class="container">
     <h1>Pretty Good Events App!</h1>
   </header>
+
+  <div class="container">
+    <div id="message">Guest...</div>
+    <div id="loginform">
+      Username: <input type="text" name="user" id="user" />
+      Password: <input type="text" name="password" id="password" value="" />
+      <button id="loginButton">Login</button>
+    </div>
+    <div id="logoutform">
+      <button id="logoutButton">Logout</button>
+    </div>
+  </div>
+
+
+  <script src="https://www.gstatic.com/firebasejs/8.0/firebase.js"></script>
+  <script>
+    var config = {
+      apiKey: "AIzaSyDLleJBKBtkw8L-_ckpO38IMULOOUg4Nz0",
+      authDomain: "uncommon-events.firebaseapp.com",
+    };
+    firebase.initializeApp(config);
+  </script>
+
+  <script>
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        document.getElementById("message").innerHTML = "Welcome, " + user.email;
+        document.getElementById("loginform").style.display = "none";
+        document.getElementById("logoutform").style.display = "block";
+        document.getElementById("username").value = user.email;
+
+        // Get a Token and add it to a cookie. Used to Authenticate at the API
+        user.getIdToken().then(function (token) {
+          document.cookie = "token=" + token;
+        });
+
+      } else {
+        document.getElementById("message").innerHTML = "Guest";
+        document.getElementById("logoutform").style.display = "none";
+        document.getElementById("loginform").style.display = "block";
+        document.getElementById("username").value = "";
+
+        // Get rid of the Authorization token. 
+        document.cookie = "token=";
+      }
+    });
+  </script>
+
+  <script>
+    $("#loginButton").click(function () {
+      var email = $("#user").val();
+      var password = $("#password").val();
+
+      firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
+        document.getElementById("message").innerHTML = error.message;
+      });
+    });
+
+    $("#logoutButton").click(function () {
+      firebase.auth().signOut();
+    });
+  </script>
 
   <div class="container">
     {{{body}}}
@@ -45,14 +107,15 @@
         <label for="event_time" class="form-label">When</label>
         <input name="event_time" type="text" />
       </div>
+      <input type="text" name="username" id="username" value="guest" />
       <input class="btn btn-primary" type="submit" name="submit" value="submit" />
     </form>
     <hr>
   </div>
 
-<footer class="container">
-  <small class="text-muted">Build Time: {{ buildtime }}</small>
-</footer>
+  <footer class="container">
+    <small class="text-muted">Build Time: {{ buildtime }}</small>
+  </footer>
 
 
 </body>
