@@ -22,3 +22,7 @@ pytest
 
 # To run tests and see console output
 pytest -s
+
+
+# To authorize requests to firebase you need the following service account key
+export GOOGLE_APPLICATION_CREDENTIALS=/Users/doug/firebase-admin-key.json

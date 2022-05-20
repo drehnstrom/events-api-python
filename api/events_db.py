@@ -51,7 +51,7 @@ class Events_DB:
             # This returns the Mock Data
             return MOCK_EVENTS   
 
-    def addEvent(self, data):
+    def addEvent(self, data, user_email):
         insert_sql = """
         INSERT INTO events (title, event_time, description, location) 
         VALUES (%s, %s, %s, %s) 

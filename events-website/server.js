@@ -22,6 +22,7 @@ const hbs = require('express-handlebars');
 // request is used to make REST calls to the backend microservice
 // details here: https://www.npmjs.com/package/request
 var request = require('request');
+//const { cookie } = require('request');
 
 // create the server
 const app = express();
@@ -38,6 +39,9 @@ app.engine('hbs', hbs.engine({
 // app.post('/route', urlencodedParser, (req, res) => {}
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 
 // defines a route that receives the request to /
 app.get('/', (req, res) => {
@@ -46,10 +50,18 @@ app.get('/', (req, res) => {
     // using an environment variable. Here, the variable is passed 
     // to npm start inside package.json:
     //  "start": "SERVER=http://localhost:8082 node server.js",
+    
+    const token = req.cookies.token
+    const jar = request.jar();
+    const cookie = request.cookie('token=' + token);
+    const url = SERVER + '/events';
+    jar.setCookie(cookie, url);
+
     request.get(  // first argument: url + return format
         {
-            url: SERVER + '/events',  // the microservice end point for events
-            json: true  // response from server will be json format
+            url: url,  // the microservice end point for events
+            json: true,  // response from server will be json format
+            jar: jar
         }, // second argument: function with three args,
         // runs when server response received
         // body hold the return from the server
@@ -86,6 +98,13 @@ app.post('/events',
     urlencodedParser, // second argument - how to parse the uploaded content
     // into req.body
     (req, res) => {
+
+        const token = req.cookies.token
+        const jar = request.jar();
+        const cookie = request.cookie('token=' + token);
+        const url = SERVER + '/events';
+        jar.setCookie(cookie, url);
+    
         // make a request to the backend microservice using the request package
         // the URL for the backend service should be set in configuration 
         // using an environment variable. Here, the variable is passed 
@@ -93,8 +112,9 @@ app.post('/events',
         //  "start": "SERVER=http://localhost:8082 node server.js",
         request.post(  // first argument: url + data + formats
             {
-                url: SERVER + '/events',  // the microservice end point for adding an event
+                url: url,  // the microservice end point for adding an event
                 body: req.body,  // content of the form
+                jar: jar,
                 headers: { // uploading json
                     "Content-Type": "application/json"
                 },

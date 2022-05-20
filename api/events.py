@@ -1,8 +1,11 @@
 
-from flask import request
+from flask import request, abort
 from flask_restful import Resource
 from config import DATABASE, USER, PASSWORD, HOST
 from events_db import Events_DB
+
+# My code to authorize requests with Firebase
+import auth 
 
 class EventsList(Resource):
     # Give me all the Events
@@ -11,8 +14,17 @@ class EventsList(Resource):
 
     def post(self):
         data = request.get_json(True)
+        user_email = ""
+
+        # Need to be authenticated before you can add an event
         try:
-            return Events_DB().addEvent(data)
+            print('checking user has logged in')
+            user_email = auth.authorize(request)
+        except Exception: 
+            abort(403)
+
+        try:
+            return Events_DB().addEvent(data, user_email)
         except (Exception) as error:
             print(error)
             return "Server Error", 500
