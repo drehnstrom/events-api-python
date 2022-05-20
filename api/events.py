@@ -4,7 +4,7 @@ from flask_restful import Resource
 from config import DATABASE, USER, PASSWORD, HOST
 from events_db import Events_DB
 
-# My code to authorize requests with Firebase
+# Module to authorize requests with Firebase
 import auth 
 
 class EventsList(Resource):
@@ -20,7 +20,9 @@ class EventsList(Resource):
         try:
             print('checking user has logged in')
             user_email = auth.authorize(request)
+            print("The user email was verified as %s".format(user_email))
         except Exception: 
+            # If we get here, then authentication failed, abort the operation
             abort(403)
 
         try:

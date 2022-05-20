@@ -28,6 +28,7 @@ gcloud sql connect uncommon --user=doug --database=eventsdb --quiet
 # Create a table with an auto-incrementing integer as key
 CREATE TABLE events(
     id SERIAL PRIMARY KEY,
+    owner VARCHAR(255) NOT NULL,
     title VARCHAR(255) NOT NULL,
     event_time VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
@@ -45,13 +46,13 @@ DROP TABLE events;
 SELECT * FROM information_schema.columns WHERE TABLE_NAME = 'events';
 
 # Add a record
-INSERT INTO events (title, event_time, description, location) 
-VALUES ('Pet Show', 'June 6 at Noon', 
+INSERT INTO events (owner, title, event_time, description, location) 
+VALUES ('test@test.com','Pet Show', 'June 6 at Noon', 
 'Super-fun with furry friends!', 'Reston Dog Park');
 
 # Add a record
-INSERT INTO events (title, event_time, description, location) 
-VALUES ('React Training', 'Next Week', 'JavaScript for fun and profit.', 'Training Room 1');
+INSERT INTO events (owner, title, event_time, description, location) 
+VALUES ('test@test.com','React Training', 'Next Week', 'JavaScript for fun and profit.', 'Training Room 1');
 
 
 # Select ALL

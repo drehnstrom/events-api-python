@@ -3,8 +3,8 @@ from config import DATABASE, USER, PASSWORD, HOST
 import psycopg2
 
 MOCK_EVENTS = { "events": [
-{'id': 1, 'title': 'Mock Pet Show', 'event_time': 'June 6 at Noon', 'description': 'Super-fun with furry friends!', 'location': 'Reston Dog Park', 'likes': 10},
-{'id': 2, 'title': 'Mock Python Course', 'event_time': 'Tomorrow', 'description': 'Coding without the curly braces', 'location': 'Training Room 1', 'likes': 20},
+{'id': 1, 'owner': 'mock@mock.com', 'title': 'Mock Pet Show', 'event_time': 'June 6 at Noon', 'description': 'Super-fun with furry friends!', 'location': 'Reston Dog Park', 'likes': 10},
+{'id': 2, 'owner': 'mock@mock.com', 'title': 'Mock Python Course', 'event_time': 'Tomorrow', 'description': 'Coding without the curly braces', 'location': 'Training Room 1', 'likes': 20},
 ]
 }
 
@@ -17,14 +17,27 @@ def getConnection():
     host = HOST, 
     port = "5432")
 
-class Events_DB:
+def buildEvent(row):
+    ev = {
+        'id': row[0],
+        'owner': row[1],
+        'title': row[2],
+        'event_time': row[3],
+        'description': row[4],
+        'location': row[5], 
+        'likes': row[6],
+        'datetime_added': str(row[7])
+    }
+    return ev
 
+
+class Events_DB:
     def getAllEvents(self):
         try:
             conn = getConnection()
             cur = conn.cursor()
             sql = """
-            SELECT id, title, event_time, description, location, likes, datetime_added 
+            SELECT id, owner, title, event_time, description, location, likes, datetime_added 
             FROM events 
             ORDER BY likes DESC;"""
 
@@ -32,15 +45,7 @@ class Events_DB:
             rows = cur.fetchall()
             DB_EVENTS["events"] = []  
             for row in rows:
-                ev = {
-                    'id': row[0],
-                    'title': row[1],
-                    'event_time': row[2],
-                    'description': row[3],
-                    'location': row[4], 
-                    'likes': row[5],
-                    'datetime_added': str(row[6])
-                }
+                ev = buildEvent(row)
                 DB_EVENTS["events"].append(ev)
             cur.close()
             conn.close()
@@ -53,10 +58,11 @@ class Events_DB:
 
     def addEvent(self, data, user_email):
         insert_sql = """
-        INSERT INTO events (title, event_time, description, location) 
-        VALUES (%s, %s, %s, %s) 
+        INSERT INTO events (owner, title, event_time, description, location) 
+        VALUES (%s, %s, %s, %s, %s) 
         RETURNING id;
         """
+        owner = ""
         title = ""
         event_time = ""
         description = ""
@@ -64,6 +70,7 @@ class Events_DB:
         id = NONE
 
         try:
+            owner = user_email
             title = data["title"]
             event_time = data["event_time"]
             description = data["description"]
@@ -74,23 +81,15 @@ class Events_DB:
         try:
             conn = getConnection()
             cur = conn.cursor()
-            cur.execute(insert_sql, (title, event_time, description, location,))
+            cur.execute(insert_sql, (owner, title, event_time, description, location,))
             id = cur.fetchone()[0]
             print(id)
             conn.commit()
             print("Executed SQL Statement: {0}".format(insert_sql))
 
-            cur.execute('SELECT id, title, event_time, description, location, likes, datetime_added FROM events WHERE id = %s', (str(id),))
+            cur.execute('SELECT id, owner, title, event_time, description, location, likes, datetime_added FROM events WHERE id = %s', (str(id),))
             row = cur.fetchone()
-            ev = {
-                'id': row[0],
-                'title': row[1],
-                'event_time': row[2],
-                'description': row[3],
-                'location': row[4], 
-                'likes': row[5],
-                'datetime_added': str(row[6])
-                }
+            ev = buildEvent(row)
             cur.close()
             conn.close()
             print("Executed SQL Statement: {0}".format(insert_sql))
@@ -104,7 +103,7 @@ class Events_DB:
         get_likes_sql = "SELECT likes from events WHERE id = %s;"
         update_likes_sql = "UPDATE events SET likes = %s WHERE id = %s"
         sql = """
-        SELECT id, title, event_time, description, location, likes, datetime_added 
+        SELECT id, owner, title, event_time, description, location, likes, datetime_added 
         FROM events
         WHERE id = %s;"""
         
@@ -123,15 +122,7 @@ class Events_DB:
             print(event_id)     
             cur.execute(sql, (event_id,))
             row = cur.fetchone()
-            ev = {
-                'id': row[0],
-                'title': row[1],
-                'event_time': row[2],
-                'description': row[3],
-                'location': row[4], 
-                'likes': row[5],
-                'datetime_added': str(row[6])
-            }
+            ev = buildEvent(row)
             cur.close()
             conn.close()
             print("Executed SQL Statement: {0}".format(sql))

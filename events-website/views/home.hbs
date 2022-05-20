@@ -9,7 +9,8 @@
     <div><span class="like" id="{{ id }}">&#128077;</span></div>
 		<div><span id="like-{{ id }}">Likes: {{ likes }}</span></div>
     <div><span class="trash" id="{{ id }}">&#128465;</span></div>
-    <small class="text-muted">{{ datetime_added }}</small>
+    <div><small class="text-muted">{{ datetime_added }}</small></div>
+    <div><small class="text-muted">{{ owner }}</small></div>
   </div>
   {{/events}}
 </ul>

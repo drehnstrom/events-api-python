@@ -32,7 +32,7 @@ class TestEventsList:
             'description': "Test Description",
             'location': "Test Location"
         }
-        new_event = self.testObj.addEvent(data)
+        new_event = self.testObj.addEvent(data, 'test@test.com')
         print(new_event)
         assert new_event['title'] == "Test Title"
         assert new_event['event_time'] == "Test Event Time"
@@ -49,7 +49,7 @@ class TestEventsList:
         count_before_adding_record = self.testObj.countEvents()
         print(count_before_adding_record)
 
-        new_event = self.testObj.addEvent(data)
+        new_event = self.testObj.addEvent(data, 'test@test.com')
         print(new_event)
         count_after_adding_record = self.testObj.countEvents()
         assert count_before_adding_record + 1 == count_after_adding_record
