@@ -4,6 +4,7 @@ from firebase_admin import auth
 def authorize(request):
     # Verify Firebase auth.
     id_token = request.cookies.get("token")
+    print(id_token)
     
     if id_token:
         try:
