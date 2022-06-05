@@ -21,7 +21,8 @@ class EventsList(Resource):
             print('checking user has logged in')
             user_email = auth.authorize(request)
             print("The user email was verified as %s".format(user_email))
-        except Exception: 
+        except (Exception) as error:
+            print(error)
             # If we get here, then authentication failed, abort the operation
             abort(403)
 

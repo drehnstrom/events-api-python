@@ -5,7 +5,7 @@ def authorize(request):
     
     try:
         default_app = firebase_admin.initialize_app()
-    except:
+    except (Exception) as error:
         pass
 
     # Verify Firebase auth.
