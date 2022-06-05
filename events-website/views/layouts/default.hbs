@@ -32,15 +32,14 @@
     </div>
   </div>
 
-
   <script src="https://www.gstatic.com/firebasejs/8.0/firebase.js"></script>
-  <script>
-    var config = {
-      apiKey: "AIzaSyDLleJBKBtkw8L-_ckpO38IMULOOUg4Nz0",
-      authDomain: "uncommon-events.firebaseapp.com",
-    };
-    firebase.initializeApp(config);
-  </script>
+<script>
+  var config = {
+    apiKey: "AIzaSyBEsujNkjgZ2SbUiuTCfS2ENxbXH5MrOG4",
+    authDomain: "roi-uncommon-2022.firebaseapp.com",
+  };
+  firebase.initializeApp(config);
+</script>
 
   <script>
     firebase.auth().onAuthStateChanged(function (user) {
@@ -48,7 +47,6 @@
         document.getElementById("message").innerHTML = "Welcome, " + user.email;
         document.getElementById("loginform").style.display = "none";
         document.getElementById("logoutform").style.display = "block";
-        document.getElementById("username").value = user.email;
 
         // Get a Token and add it to a cookie. Used to Authenticate at the API
         user.getIdToken().then(function (token) {
@@ -59,8 +57,7 @@
         document.getElementById("message").innerHTML = "Guest";
         document.getElementById("logoutform").style.display = "none";
         document.getElementById("loginform").style.display = "block";
-        document.getElementById("username").value = "";
-
+       
         // Get rid of the Authorization token. 
         document.cookie = "token=";
       }
@@ -105,7 +102,6 @@
         <label for="event_time" class="form-label">When</label>
         <input name="event_time" type="text" />
       </div>
-      <input type="test" name="username" id="username" value="guest" />
       <input class="btn btn-primary" type="submit" name="submit" value="submit" />
     </form>
     <hr>

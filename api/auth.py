@@ -2,14 +2,19 @@ import firebase_admin
 from firebase_admin import auth
 
 def authorize(request):
+    
+    try:
+        default_app = firebase_admin.initialize_app()
+    except:
+        pass
+
     # Verify Firebase auth.
     id_token = request.cookies.get("token")
-    print(id_token)
+    print("id_token: " + id_token)
     
     if id_token:
         try:
             # Verify the token against the Firebase Auth API. 
-            default_app = firebase_admin.initialize_app()
             decoded_token = auth.verify_id_token(id_token)
             uid = decoded_token['uid']
             email = decoded_token['email']

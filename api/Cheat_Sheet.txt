@@ -12,7 +12,6 @@ curl -X POST -H "Content-Type: application/json" -d '{"title": "Dinner", "event_
 
 curl -X POST -H "Content-Type: application/json" -d '{"title": "Basketball", "event_time": "After Work", "description": "Get some exercise", "location": "At the Gym"}' http://localhost:8082/events
 
-
 # Curl to Delete event
 curl -X DELETE http://localhost:8082/events/<ID>
 
@@ -23,6 +22,5 @@ pytest
 # To run tests and see console output
 pytest -s
 
-
 # To authorize requests to firebase you need the following service account key
-export GOOGLE_APPLICATION_CREDENTIALS=/Users/doug/firebase-admin-key.json
+export GOOGLE_APPLICATION_CREDENTIALS=/Users/doug/uncommon-cloud-run-key.json
